@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Client Risk Score — Meridian Textiles Ltd.</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600;8..60,700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          ink: '#101828',
+          slate: {
+            50: '#F7F8FA',
+            100: '#F0F1F3',
+            200: '#E4E7EC',
+            400: '#98A2B3',
+            500: '#667085',
+            700: '#344054',
+          },
+          cobalt: '#2450C4',
+          riskgreen: { DEFAULT: '#12805C', bg: '#ECFDF5', border: '#A6E9D2' },
+          riskamber: { DEFAULT: '#B54708', bg: '#FFFAEB', border: '#FBD9A6' },
+          riskred: { DEFAULT: '#B42318', bg: '#FEF3F2', border: '#F6B8B2' },
+        },
+        fontFamily: {
+          serif: ['"Source Serif 4"', 'serif'],
+          sans: ['Inter', 'sans-serif'],
+          mono: ['"IBM Plex Mono"', 'monospace'],
+        },
+      }
+    }
+  }
+</script>
+<style>
+  body { background-color: #F7F8FA; }
+  .tick { stroke: #CBD2DD; stroke-width: 1.5; }
+  .num-tab { font-variant-numeric: tabular-nums; }
+  .hairline { box-shadow: inset 0 0 0 1px #E4E7EC; }
+</style>
+</head>
+<body class="min-h-screen text-ink font-sans antialiased">
+
+  <!-- Top ledger bar -->
+  <header class="bg-ink text-white">
+    <div class="max-w-6xl mx-auto px-5 sm:px-8 py-4 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="h-8 w-8 rounded-sm border border-white/25 flex items-center justify-center font-serif text-sm">RA</div>
+        <div class="leading-tight">
+          <p class="text-sm font-semibold tracking-wide">Risk Assessment Ledger</p>
+          <p class="text-[11px] text-white/50 font-mono">Counterparty Credit &amp; Operations Review</p>
+        </div>
+      </div>
+      <div class="text-right hidden sm:block">
+        <p class="text-[11px] text-white/50 font-mono">Assessed 18 Aug 2026, 09:41 GMT+6</p>
+        <p class="text-[11px] text-white/50 font-mono">Reviewer: S. Rahman, Credit Risk</p>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-6xl mx-auto px-5 sm:px-8 py-8 sm:py-10">
+
+    <!-- Client meta strip -->
+    <div class="flex flex-wrap items-end justify-between gap-4 mb-6 pb-6 border-b border-slate-200">
+      <div>
+        <p class="text-[11px] uppercase tracking-[0.14em] text-slate-500 font-semibold mb-1">Client Record</p>
+        <h1 class="font-serif text-2xl sm:text-3xl font-semibold text-ink">Meridian Textiles Ltd.</h1>
+        <p class="text-sm text-slate-500 mt-1">Apparel Manufacturing &amp; Export · Client ID CRM-88291 · Onboarded Mar 2021</p>
+      </div>
+      <div class="flex gap-6 text-right">
+        <div>
+          <p class="text-[11px] uppercase tracking-[0.1em] text-slate-500 font-semibold">Exposure</p>
+          <p class="font-mono text-sm text-ink mt-1">$4.85M</p>
+        </div>
+        <div>
+          <p class="text-[11px] uppercase tracking-[0.1em] text-slate-500 font-semibold">Facility Type</p>
+          <p class="font-mono text-sm text-ink mt-1">Revolving WC</p>
+        </div>
+        <div>
+          <p class="text-[11px] uppercase tracking-[0.1em] text-slate-500 font-semibold">Next Review</p>
+          <p class="font-mono text-sm text-ink mt-1">18 Nov 2026</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+      <!-- Score / Gauge card -->
+      <section class="lg:col-span-4">
+        <div class="bg-white rounded-lg hairline p-6 h-full flex flex-col">
+          <p class="text-[11px] uppercase tracking-[0.14em] text-slate-500 font-semibold mb-4">Composite Risk Score</p>
+
+          <div class="relative mx-auto w-full max-w-[260px]">
+            <svg viewBox="0 0 200 112" class="w-full">
+              <!-- zone bands -->
+              <path d="M20,100 A80,80 0 0 1 100,20" fill="none" stroke="#F6B8B2" stroke-width="14" stroke-linecap="round"/>
+              <path d="M100,20 A80,80 0 0 1 164.7,52.98" fill="none" stroke="#FBD9A6" stroke-width="14" stroke-linecap="round"/>
+              <path d="M164.7,52.98 A80,80 0 0 1 180,100" fill="none" stroke="#A6E9D2" stroke-width="14" stroke-linecap="round"/>
+
+              <!-- tick marks at 0,50,80,100 -->
+              <line x1="20" y1="100" x2="12" y2="100" class="tick"/>
+              <line x1="100" y1="20" x2="100" y2="12" class="tick"/>
+              <line x1="164.7" y1="52.98" x2="170.9" y2="42.1" class="tick"/>
+              <line x1="180" y1="100" x2="188" y2="100" class="tick"/>
+
+              <!-- needle -->
+              <g>
+                <line x1="100" y1="100" x2="145.97" y2="40.73" stroke="#B54708" stroke-width="2.5" stroke-linecap="round"/>
+                <circle cx="100" cy="100" r="5.5" fill="#101828"/>
+              </g>
+            </svg>
+
+            <div class="absolute inset-x-0 bottom-0 text-center">
+              <p class="font-mono text-4xl sm:text-5xl font-semibold text-riskamber num-tab leading-none">71<span class="text-2xl align-top">%</span></p>
+            </div>
+          </div>
+
+          <div class="mt-3 flex justify-center">
+            <span class="inline-flex items-center gap-1.5 rounded-full border border-riskamber-border bg-riskamber-bg px-3 py-1 text-xs font-semibold text-riskamber">
+              <span class="h-1.5 w-1.5 rounded-full bg-riskamber"></span>
+              Moderate Risk
+            </span>
+          </div>
+
+          <div class="mt-6 pt-5 border-t border-slate-200 space-y-3 text-sm">
+            <div class="flex justify-between">
+              <span class="text-slate-500">Prior quarter score</span>
+              <span class="font-mono text-ink">76%</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-slate-500">Movement</span>
+              <span class="font-mono text-riskred">−5 pts</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-slate-500">Model confidence</span>
+              <span class="font-mono text-ink">High (0.91)</span>
+            </div>
+          </div>
+
+          <div class="mt-6 flex gap-4 justify-center text-[11px] font-mono text-slate-500">
+            <span class="flex items-center gap-1.5"><span class="h-2 w-2 rounded-sm bg-[#F6B8B2]"></span>0–49 High</span>
+            <span class="flex items-center gap-1.5"><span class="h-2 w-2 rounded-sm bg-[#FBD9A6]"></span>50–79 Moderate</span>
+            <span class="flex items-center gap-1.5"><span class="h-2 w-2 rounded-sm bg-[#A6E9D2]"></span>80–100 Low</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Factor breakdown -->
+      <section class="lg:col-span-8">
+        <div class="bg-white rounded-lg hairline h-full">
+          <div class="px-6 pt-6 pb-4 flex items-baseline justify-between">
+            <p class="text-[11px] uppercase tracking-[0.14em] text-slate-500 font-semibold">AI-Derived Scoring Factors</p>
+            <p class="text-[11px] font-mono text-slate-400">weight → contribution</p>
+          </div>
+
+          <div class="divide-y divide-slate-200">
+
+            <!-- Row template -->
+            <div class="px-6 py-4 grid grid-cols-12 gap-3 items-center">
+              <div class="col-span-12 sm:col-span-5">
+                <p class="text-sm font-semibold text-ink">Client Portfolio</p>
+                <p class="text-xs text-slate-500 mt-0.5">14 active accounts, 3 in top-tier segment; diversified across 4 markets</p>
+              </div>
+              <div class="col-span-6 sm:col-span-3">
+                <div class="h-1.5 w-full rounded-full bg-slate-100 overflow-hidden">
+                  <div class="h-full rounded-full bg-riskgreen" style="width:82%"></div>
+                </div>
+                <p class="text-[11px] font-mono text-slate-400 mt-1">weight 20%</p>
+              </div>
+              <div class="col-span-3 sm:col-span-2 text-right sm:text-left">
+                <p class="font-mono text-sm font-semibold text-riskgreen">82</p>
+              </div>
+              <div class="col-span-3 sm:col-span-2 flex justify-end">
+                <span class="inline-block rounded-full border border-riskgreen-border bg-riskgreen-bg px-2.5 py-0.5 text-[11px] font-semibold text-riskgreen">Low</span>
+              </div>
+            </div>
+
+            <div class="px-6 py-4 grid grid-cols-12 gap-3 items-center">
+              <div class="col-span-12 sm:col-span-5">
+                <p class="text-sm font-semibold text-ink">Payment History</p>
+                <p class="text-xs text-slate-500 mt-0.5">92% on-time settlement over trailing 12 months; 2 instances &gt;30 days late</p>
+              </div>
+              <div class="col-span-6 sm:col-span-3">
+                <div class="h-1.5 w-full rounded-full bg-slate-100 overflow-hidden">
+                  <div class="h-full rounded-full bg-riskgreen" style="width:88%"></div>
+                </div>
+                <p class="text-[11px] font-mono text-slate-400 mt-1">weight 25%</p>
+              </div>
+              <div class="col-span-3 sm:col-span-2 text-right sm:text-left">
+                <p class="font-mono text-sm font-semibold text-riskgreen">88</p>
+              </div>
+              <div class="col-span-3 sm:col-span-2 flex justify-end">
+                <span class="inline-block rounded-full border border-riskgreen-border bg-riskgreen-bg px-2.5 py-0.5 text-[11px] font-semibold text-riskgreen">Low</span>
+              </div>
+            </div>
+
+            <div class="px-6 py-4 grid grid-cols-12 gap-3 items-center">
+              <div class="col-span-12 sm:col-span-5">
+                <p class="text-sm font-semibold text-ink">New Recruitments</p>
+                <p class="text-xs text-slate-500 mt-0.5">Headcount up 6% QoQ, offset by two vacant senior finance roles</p>
+              </div>
+              <div class="col-span-6 sm:col-span-3">
+                <div class="h-1.5 w-full rounded-full bg-slate-100 overflow-hidden">
+                  <div class="h-full rounded-full bg-riskamber" style="width:61%"></div>
+                </div>
+                <p class="text-[11px] font-mono text-slate-400 mt-1">weight 10%</p>
+              </div>
+              <div class="col-span-3 sm:col-span-2 text-right sm:text-left">
+                <p class="font-mono text-sm font-semibold text-riskamber">61</p>
+              </div>
+              <div class="col-span-3 sm:col-span-2 flex justify-end">
+                <span class="inline-block rounded-full border border-riskamber-border bg-riskamber-bg px-2.5 py-0.5 text-[11px] font-semibold text-riskamber">Moderate</span>
+              </div>
+            </div>
+
+            <div class="px-6 py-4 grid grid-cols-12 gap-3 items-center">
+              <div class="col-span-12 sm:col-span-5">
+                <p class="text-sm font-semibold text-ink">Funding</p>
+                <p class="text-xs text-slate-500 mt-0.5">Working capital facility utilization at 78%; one covenant nearing threshold</p>
+              </div>
+              <div class="col-span-6 sm:col-span-3">
+                <div class="h-1.5 w-full rounded-full bg-slate-100 overflow-hidden">
+                  <div class="h-full rounded-full bg-riskamber" style="width:58%"></div>
+                </div>
+                <p class="text-[11px] font-mono text-slate-400 mt-1">weight 20%</p>
+              </div>
+              <div class="col-span-3 sm:col-span-2 text-right sm:text-left">
+                <p class="font-mono text-sm font-semibold text-riskamber">58</p>
+              </div>
+              <div class="col-span-3 sm:col-span-2 flex justify-end">
+                <span class="inline-block rounded-full border border-riskamber-border bg-riskamber-bg px-2.5 py-0.5 text-[11px] font-semibold text-riskamber">Moderate</span>
+              </div>
+            </div>
+
+            <div class="px-6 py-4 grid grid-cols-12 gap-3 items-center">
+              <div class="col-span-12 sm:col-span-5">
+                <p class="text-sm font-semibold text-ink">Business Growth</p>
+                <p class="text-xs text-slate-500 mt-0.5">Revenue up 4.2% YoY, trailing sector average growth of 7.0%</p>
+              </div>
+              <div class="col-span-6 sm:col-span-3">
+                <div class="h-1.5 w-full rounded-full bg-slate-100 overflow-hidden">
+                  <div class="h-full rounded-full bg-riskamber" style="width:65%"></div>
+                </div>
+                <p class="text-[11px] font-mono text-slate-400 mt-1">weight 15%</p>
+              </div>
+              <div class="col-span-3 sm:col-span-2 text-right sm:text-left">
+                <p class="font-mono text-sm font-semibold text-riskamber">65</p>
+              </div>
+              <div class="col-span-3 sm:col-span-2 flex justify-end">
+                <span class="inline-block rounded-full border border-riskamber-border bg-riskamber-bg px-2.5 py-0.5 text-[11px] font-semibold text-riskamber">Moderate</span>
+              </div>
+            </div>
+
+            <div class="px-6 py-4 grid grid-cols-12 gap-3 items-center">
+              <div class="col-span-12 sm:col-span-5">
+                <p class="text-sm font-semibold text-ink">Revenue Cycle Status</p>
+                <p class="text-xs text-slate-500 mt-0.5">Days Sales Outstanding rose to 61 days, from 48 days last quarter</p>
+              </div>
+              <div class="col-span-6 sm:col-span-3">
+                <div class="h-1.5 w-full rounded-full bg-slate-100 overflow-hidden">
+                  <div class="h-full rounded-full bg-riskred" style="width:42%"></div>
+                </div>
+                <p class="text-[11px] font-mono text-slate-400 mt-1">weight 10%</p>
+              </div>
+              <div class="col-span-3 sm:col-span-2 text-right sm:text-left">
+                <p class="font-mono text-sm font-semibold text-riskred">42</p>
+              </div>
+              <div class="col-span-3 sm:col-span-2 flex justify-end">
+                <span class="inline-block rounded-full border border-riskred-border bg-riskred-bg px-2.5 py-0.5 text-[11px] font-semibold text-riskred">High</span>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="px-6 py-4 border-t border-slate-200 flex flex-wrap items-center justify-between gap-2 bg-slate-50 rounded-b-lg">
+            <p class="text-xs text-slate-500">Weighted composite = Σ (factor score × weight), rounded to nearest whole percent.</p>
+            <p class="text-xs font-mono text-ink">Σ weight = 100%</p>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- Analyst note -->
+    <div class="mt-6 bg-white rounded-lg hairline p-6">
+      <p class="text-[11px] uppercase tracking-[0.14em] text-slate-500 font-semibold mb-2">Analyst Note</p>
+      <p class="text-sm text-ink leading-relaxed max-w-3xl">
+        Overall standing remains <span class="text-riskamber font-semibold">Moderate</span>, supported by strong payment discipline and a diversified account base.
+        The primary drag is a lengthening revenue cycle — DSO has widened by 13 days quarter-over-quarter — combined with rising facility utilization.
+        Recommend a targeted follow-up on receivables collection and covenant headroom ahead of the November review.
+      </p>
+    </div>
+
+    <footer class="mt-8 pt-5 border-t border-slate-200 flex flex-wrap justify-between gap-2 text-[11px] font-mono text-slate-400">
+      <span>Generated by AI Risk Model v4.2 · For internal credit review use only</span>
+      <span>Meridian Textiles Ltd. · CRM-88291</span>
+    </footer>
+
+  </main>
+</body>
+</html>
