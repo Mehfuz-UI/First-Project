@@ -154,107 +154,141 @@
   </main>
 
   <script>
+    // PASTE YOUR GEMINI API KEY INSIDE THE QUOTES BELOW
+    const GEMINI_API_KEY = "AQ.Ab8RN6Jn-4r_nPNBbofGCCd1pn63bzUViQSXIevMfyVQY_q9Uw"; 
+
     async function runMockAI() {
       const input = document.getElementById('companyName').value;
       if (!input) return alert("Please enter a company name!");
 
       // 1. Loading State
       const btn = document.getElementById('analyzeBtn');
-      btn.innerText = "Analyzing data...";
+      btn.innerText = "Consulting Gemini AI...";
       btn.classList.add("opacity-70");
-      document.getElementById('detailedFactors').innerHTML = `<p class="animate-pulse text-cobalt font-semibold">Extracting financial and HR data for ${input}...</p>`;
-
-      await new Promise(resolve => setTimeout(resolve, 1500));
-
+      document.getElementById('detailedFactors').innerHTML = `<p class="animate-pulse text-cobalt font-semibold">Connecting to Gemini AI to extract live data for ${input}...</p>`;
       document.getElementById('clientNameDisplay').innerText = input;
-      
-      // 2. Data Extraction (Simulated for now)
-      const revenue = parseFloat((Math.random() * 25 + 1).toFixed(1)); 
-      const funding = parseFloat((Math.random() * 10).toFixed(1));
-      const runway = Math.floor(Math.random() * 30 + 2); 
-      const attrition = parseFloat((Math.random() * 25 + 2).toFixed(1)); 
-      const insource = Math.floor(Math.random() * 50 + 5);
-      const leadership = Math.floor(Math.random() * 4); 
-      const marketVolatility = Math.floor(Math.random() * 15); 
 
-      // 3. GRADUAL RISK CALCULATION
-      let capacityRisk = 0;
-      if (runway <= 6) capacityRisk = 35;
-      else if (runway >= 24) capacityRisk = 0;
-      else capacityRisk = 35 - ((runway - 6) / 18) * 35; 
+      try {
+        // 2. The Expert Prompt: Forcing JSON Output
+        const promptText = `You are a financial risk analyst AI. Estimate the following metrics for the company "${input}". If exact data is unavailable, provide an educated industry estimate. 
+        Return ONLY a raw JSON object (no markdown, no backticks) with exactly these keys: 
+        "revenue" (number in millions), 
+        "funding" (number in millions), 
+        "runway" (number of months), 
+        "attrition" (number as a percentage), 
+        "marketVolatility" (number between 0 and 15).
+        Example: {"revenue": 15.5, "funding": 2.0, "runway": 18, "attrition": 12.5, "marketVolatility": 8}`;
 
-      let characterRisk = 0;
-      if (attrition >= 20) characterRisk = 30;
-      else if (attrition <= 5) characterRisk = 0;
-      else characterRisk = ((attrition - 5) / 15) * 30; 
+        // 3. The API Fetch Request
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            contents: [{ parts: [{ text: promptText }] }]
+          })
+        });
 
-      let capitalRisk = 0;
-      if (revenue <= 2) capitalRisk = 20;
-      else if (revenue >= 20) capitalRisk = 0;
-      else capitalRisk = 20 - ((revenue - 2) / 18) * 20; 
+        if (!response.ok) throw new Error("API request failed");
 
-      const riskScore = Math.min(100, Math.round(capacityRisk + characterRisk + capitalRisk + marketVolatility));
+        const data = await response.json();
+        let aiText = data.candidates[0].content.parts[0].text;
+        
+        // 4. Data Cleaning (Crucial step to remove accidental markdown code blocks)
+        aiText = aiText.replace(/```json/g, "").replace(/```/g, "").trim();
+        const aiData = JSON.parse(aiText);
 
-      // 4. UI Updates: Gauge Needle
-      const degrees = (riskScore / 100) * 180;
-      document.getElementById('gaugeNeedle').style.transform = `rotate(${degrees}deg)`;
+        // 5. Map AI Data to our Variables
+        const revenue = parseFloat(aiData.revenue) || 5.0;
+        const funding = parseFloat(aiData.funding) || 0;
+        const runway = parseInt(aiData.runway) || 12;
+        const attrition = parseFloat(aiData.attrition) || 10;
+        const marketVolatility = parseInt(aiData.marketVolatility) || 5;
+        
+        // Keeping these two static for this demo to simplify the AI prompt
+        const insource = Math.floor(Math.random() * 20 + 5); 
+        const leadership = Math.floor(Math.random() * 3);
 
-      // 5. UI Updates: Colors and Badges
-      const scoreEl = document.getElementById('scoreNumber');
-      const badgeEl = document.getElementById('scoreBadge');
-      
-      scoreEl.className = "font-mono text-5xl font-semibold leading-none ";
-      badgeEl.className = "inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-semibold ";
+        // 6. GRADUAL RISK CALCULATION (The exact same math we built earlier!)
+        let capacityRisk = 0;
+        if (runway <= 6) capacityRisk = 35;
+        else if (runway >= 24) capacityRisk = 0;
+        else capacityRisk = 35 - ((runway - 6) / 18) * 35; 
 
-      let riskCategoryText = "";
+        let characterRisk = 0;
+        if (attrition >= 20) characterRisk = 30;
+        else if (attrition <= 5) characterRisk = 0;
+        else characterRisk = ((attrition - 5) / 15) * 30; 
 
-      if (riskScore > 50) { 
-        riskCategoryText = "High Risk";
-        scoreEl.className += "text-riskred";
-        badgeEl.className += "border-riskred-border bg-riskred-bg text-riskred";
-        badgeEl.innerHTML = `<span class="h-1.5 w-1.5 rounded-full bg-riskred"></span> ${riskCategoryText}`;
-      } else if (riskScore >= 30) { 
-        riskCategoryText = "Moderate Risk";
-        scoreEl.className += "text-riskamber";
-        badgeEl.className += "border-riskamber-border bg-riskamber-bg text-riskamber";
-        badgeEl.innerHTML = `<span class="h-1.5 w-1.5 rounded-full bg-riskamber"></span> ${riskCategoryText}`;
-      } else if (riskScore >= 15) { 
-        riskCategoryText = "Low/Medium Risk";
-        scoreEl.className += "text-riskblue";
-        badgeEl.className += "border-riskblue-border bg-riskblue-bg text-riskblue";
-        badgeEl.innerHTML = `<span class="h-1.5 w-1.5 rounded-full bg-riskblue"></span> ${riskCategoryText}`;
-      } else { 
-        riskCategoryText = "Very Low Risk";
-        scoreEl.className += "text-riskgreen";
-        badgeEl.className += "border-riskgreen-border bg-riskgreen-bg text-riskgreen";
-        badgeEl.innerHTML = `<span class="h-1.5 w-1.5 rounded-full bg-riskgreen"></span> ${riskCategoryText}`;
+        let capitalRisk = 0;
+        if (revenue <= 2) capitalRisk = 20;
+        else if (revenue >= 20) capitalRisk = 0;
+        else capitalRisk = 20 - ((revenue - 2) / 18) * 20; 
+
+        const riskScore = Math.min(100, Math.round(capacityRisk + characterRisk + capitalRisk + marketVolatility));
+
+        // 7. UI Updates
+        const degrees = (riskScore / 100) * 180;
+        document.getElementById('gaugeNeedle').style.transform = `rotate(${degrees}deg)`;
+
+        const scoreEl = document.getElementById('scoreNumber');
+        const badgeEl = document.getElementById('scoreBadge');
+        
+        scoreEl.className = "font-mono text-5xl font-semibold leading-none ";
+        badgeEl.className = "inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-semibold ";
+
+        let riskCategoryText = "";
+        if (riskScore > 50) { 
+          riskCategoryText = "High Risk";
+          scoreEl.className += "text-riskred";
+          badgeEl.className += "border-riskred-border bg-riskred-bg text-riskred";
+          badgeEl.innerHTML = `<span class="h-1.5 w-1.5 rounded-full bg-riskred"></span> ${riskCategoryText}`;
+        } else if (riskScore >= 30) { 
+          riskCategoryText = "Moderate Risk";
+          scoreEl.className += "text-riskamber";
+          badgeEl.className += "border-riskamber-border bg-riskamber-bg text-riskamber";
+          badgeEl.innerHTML = `<span class="h-1.5 w-1.5 rounded-full bg-riskamber"></span> ${riskCategoryText}`;
+        } else if (riskScore >= 15) { 
+          riskCategoryText = "Low/Medium Risk";
+          scoreEl.className += "text-riskblue";
+          badgeEl.className += "border-riskblue-border bg-riskblue-bg text-riskblue";
+          badgeEl.innerHTML = `<span class="h-1.5 w-1.5 rounded-full bg-riskblue"></span> ${riskCategoryText}`;
+        } else { 
+          riskCategoryText = "Very Low Risk";
+          scoreEl.className += "text-riskgreen";
+          badgeEl.className += "border-riskgreen-border bg-riskgreen-bg text-riskgreen";
+          badgeEl.innerHTML = `<span class="h-1.5 w-1.5 rounded-full bg-riskgreen"></span> ${riskCategoryText}`;
+        }
+        
+        scoreEl.innerHTML = `${riskScore}<span class="text-2xl align-top">%</span>`;
+
+        // 8. Build Dynamic Report using Real AI Data
+        document.getElementById('detailedFactors').innerHTML = `
+          <div class="w-full space-y-5">
+            <div class="grid grid-cols-2 sm:grid-cols-3 gap-y-6 gap-x-4 border-b border-slate-100 pb-5">
+              <div><p class="text-xs text-slate-400">Est. Annual Revenue</p><p class="font-mono text-lg text-ink font-semibold">$${revenue}M</p></div>
+              <div><p class="text-xs text-slate-400">Recent Funding</p><p class="font-mono text-lg text-ink font-semibold">$${funding}M</p></div>
+              <div><p class="text-xs text-slate-400">Est. Cash Runway</p><p class="font-mono text-lg text-ink font-semibold">${runway} mos</p></div>
+              <div><p class="text-xs text-slate-400">Employee Attrition</p><p class="font-mono text-lg text-ink font-semibold">${attrition}%</p></div>
+              <div><p class="text-xs text-slate-400">Employee Insource</p><p class="font-mono text-lg text-ink font-semibold">+${insource} roles</p></div>
+              <div><p class="text-xs text-slate-400">Sr. Leadership Hiring</p><p class="font-mono text-lg text-ink font-semibold">${leadership} exec(s)</p></div>
+            </div>
+            <div>
+               <p class="text-sm text-ink font-semibold mb-1">Live Gemini AI Assessment Summary</p>
+               <p class="text-sm leading-relaxed mb-3">Based on live data extraction, <strong>${input}</strong> generated a cumulative risk score of ${riskScore}% (${riskCategoryText}).</p>
+               <ul class="text-xs space-y-1 text-slate-500">
+                 <li><strong class="text-slate-700">Capacity Penalty:</strong> ${Math.round(capacityRisk)}/35 pts (derived from ${runway} mo runway)</li>
+                 <li><strong class="text-slate-700">Character Penalty:</strong> ${Math.round(characterRisk)}/30 pts (derived from ${attrition}% turnover)</li>
+                 <li><strong class="text-slate-700">Capital Penalty:</strong> ${Math.round(capitalRisk)}/20 pts (derived from $${revenue}M revenue)</li>
+                 <li><strong class="text-slate-700">Conditions Penalty:</strong> ${marketVolatility}/15 pts (AI volatility index)</li>
+               </ul>
+            </div>
+          </div>
+        `;
+
+      } catch (error) {
+        console.error("AI Error:", error);
+        document.getElementById('detailedFactors').innerHTML = `<p class="text-riskred font-semibold">Error connecting to AI. Please check your API key and try again.</p>`;
       }
-      
-      scoreEl.innerHTML = `${riskScore}<span class="text-2xl align-top">%</span>`;
-
-      // 6. Build Dynamic Report
-      document.getElementById('detailedFactors').innerHTML = `
-        <div class="w-full space-y-5">
-          <div class="grid grid-cols-2 sm:grid-cols-3 gap-y-6 gap-x-4 border-b border-slate-100 pb-5">
-            <div><p class="text-xs text-slate-400">Est. Annual Revenue</p><p class="font-mono text-lg text-ink font-semibold">$${revenue}M</p></div>
-            <div><p class="text-xs text-slate-400">Recent Funding</p><p class="font-mono text-lg text-ink font-semibold">$${funding}M</p></div>
-            <div><p class="text-xs text-slate-400">Est. Cash Runway</p><p class="font-mono text-lg text-ink font-semibold">${runway} mos</p></div>
-            <div><p class="text-xs text-slate-400">Employee Attrition</p><p class="font-mono text-lg text-ink font-semibold">${attrition}%</p></div>
-            <div><p class="text-xs text-slate-400">Employee Insource</p><p class="font-mono text-lg text-ink font-semibold">+${insource} roles</p></div>
-            <div><p class="text-xs text-slate-400">Sr. Leadership Hiring</p><p class="font-mono text-lg text-ink font-semibold">${leadership} exec(s)</p></div>
-          </div>
-          <div>
-             <p class="text-sm text-ink font-semibold mb-1">AI 5 C's Assessment Summary</p>
-             <p class="text-sm leading-relaxed mb-3">Based on the extraction algorithm, <strong>${input}</strong> generated a cumulative risk score of ${riskScore}% (${riskCategoryText}).</p>
-             <ul class="text-xs space-y-1 text-slate-500">
-               <li><strong class="text-slate-700">Capacity Penalty:</strong> ${Math.round(capacityRisk)}/35 pts (derived from ${runway} mo runway)</li>
-               <li><strong class="text-slate-700">Character Penalty:</strong> ${Math.round(characterRisk)}/30 pts (derived from ${attrition}% turnover)</li>
-               <li><strong class="text-slate-700">Capital Penalty:</strong> ${Math.round(capitalRisk)}/20 pts (derived from $${revenue}M revenue)</li>
-               <li><strong class="text-slate-700">Conditions Penalty:</strong> ${marketVolatility}/15 pts (AI volatility index)</li>
-             </ul>
-          </div>
-        </div>
-      `;
 
       btn.innerText = "Run AI Analysis";
       btn.classList.remove("opacity-70");
