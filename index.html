@@ -28,7 +28,6 @@
   body { background-color: #F7F8FA; }
   .tick { stroke: #CBD2DD; stroke-width: 1.5; }
   .hairline { box-shadow: inset 0 0 0 1px #E4E7EC; }
-  /* Smooth animation for the needle */
   #gaugeNeedle { transition: transform 1.5s cubic-bezier(0.4, 0, 0.2, 1); transform-origin: 100px 100px; }
 </style>
 </head>
@@ -47,7 +46,6 @@
 
   <main class="max-w-6xl mx-auto px-5 py-8">
 
-    <!-- Dynamic Search Bar -->
     <div class="mb-8 bg-white p-4 rounded-lg hairline flex gap-4 items-center">
       <input type="text" id="companyName" placeholder="Enter company name to analyze..." class="border border-slate-200 p-3 rounded-md w-full font-sans text-sm outline-none focus:border-cobalt">
       <button id="analyzeBtn" onclick="runMockAI()" class="bg-cobalt hover:bg-blue-800 text-white px-6 py-3 rounded-md text-sm font-semibold whitespace-nowrap transition-colors">
@@ -55,14 +53,13 @@
       </button>
     </div>
 
-    <!-- Client Header -->
     <div class="mb-6 pb-6 border-b border-slate-200">
       <h1 id="clientNameDisplay" class="font-serif text-3xl font-semibold text-ink">Awaiting Input...</h1>
     </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
       
-      <!-- Score / Gauge card -->
+      <!-- Score / Gauge card WITH SCORING TABLE -->
       <section class="lg:col-span-4">
         <div class="bg-white rounded-lg hairline p-6 h-full flex flex-col items-center">
           <p class="text-[11px] uppercase tracking-[0.14em] text-slate-500 font-semibold mb-4 self-start">Composite Risk Score</p>
@@ -70,16 +67,12 @@
           <div class="relative w-full max-w-[260px]">
             <svg viewBox="0 0 200 112" class="w-full">
               <!-- Zone bands: 15%, 30%, 50%, 100% -->
-              <!-- Green: 0-15% -->
               <path d="M20,100 A80,80 0 0 1 28.72,63.68" fill="none" stroke="#A6E9D2" stroke-width="14" stroke-linecap="round"/>
-              <!-- Blue: 15-30% -->
               <path d="M28.72,63.68 A80,80 0 0 1 52.98,35.28" fill="none" stroke="#B9E6FE" stroke-width="14" stroke-linecap="round"/>
-              <!-- Amber: 30-50% -->
               <path d="M52.98,35.28 A80,80 0 0 1 100,20" fill="none" stroke="#FBD9A6" stroke-width="14" stroke-linecap="round"/>
-              <!-- Red: 50-100% -->
               <path d="M100,20 A80,80 0 0 1 180,100" fill="none" stroke="#F6B8B2" stroke-width="14" stroke-linecap="round"/>
               
-              <!-- Needle Group -->
+              <!-- Needle -->
               <g id="gaugeNeedle" style="transform: rotate(0deg);">
                 <line x1="100" y1="100" x2="25" y2="100" stroke="#101828" stroke-width="3" stroke-linecap="round"/>
                 <circle cx="100" cy="100" r="6" fill="#101828"/>
@@ -94,6 +87,27 @@
                Pending Analysis
              </span>
           </div>
+
+          <!-- NEW: 5 C's Framework Scoring Table -->
+          <div class="mt-8 w-full border-t border-slate-200 pt-5">
+            <p class="text-[11px] uppercase tracking-[0.14em] text-slate-500 font-semibold mb-3">5 C's Risk Weighting</p>
+            <table class="w-full text-xs text-left text-slate-600">
+              <thead>
+                <tr class="border-b border-slate-200">
+                  <th class="pb-2 font-semibold">Category</th>
+                  <th class="pb-2 font-semibold">Metric</th>
+                  <th class="pb-2 text-right font-semibold">Max Risk</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-100">
+                <tr><td class="py-2">Capacity</td><td class="py-2">Cash Runway</td><td class="py-2 text-right font-mono font-semibold text-riskred">35 pts</td></tr>
+                <tr><td class="py-2">Character</td><td class="py-2">Attrition</td><td class="py-2 text-right font-mono font-semibold text-riskred">30 pts</td></tr>
+                <tr><td class="py-2">Capital</td><td class="py-2">Revenue</td><td class="py-2 text-right font-mono font-semibold text-riskred">20 pts</td></tr>
+                <tr><td class="py-2">Conditions</td><td class="py-2">AI Volatility Index</td><td class="py-2 text-right font-mono font-semibold text-riskred">15 pts</td></tr>
+              </tbody>
+            </table>
+          </div>
+
         </div>
       </section>
 
@@ -119,27 +133,47 @@
       const btn = document.getElementById('analyzeBtn');
       btn.innerText = "Analyzing data...";
       btn.classList.add("opacity-70");
-      document.getElementById('detailedFactors').innerHTML = `<p class="animate-pulse text-cobalt font-semibold">Fetching web, financial, and HR data for ${input}...</p>`;
+      document.getElementById('detailedFactors').innerHTML = `<p class="animate-pulse text-cobalt font-semibold">Extracting financial and HR data for ${input}...</p>`;
 
       await new Promise(resolve => setTimeout(resolve, 1500));
 
-      // 2. Data Generation (Simulating AI Extraction)
       document.getElementById('clientNameDisplay').innerText = input;
-      const riskScore = Math.floor(Math.random() * 100) + 1;
       
-      // Generating realistic random metrics
-      const revenue = (Math.random() * 50 + 2).toFixed(1);
-      const funding = (Math.random() * 20).toFixed(1);
-      const runway = Math.floor(Math.random() * 24 + 3);
-      const attrition = (Math.random() * 15 + 2).toFixed(1);
+      // 2. Data Extraction (Simulated for now)
+      const revenue = parseFloat((Math.random() * 25 + 1).toFixed(1)); // $1M to $26M
+      const funding = parseFloat((Math.random() * 10).toFixed(1));
+      const runway = Math.floor(Math.random() * 30 + 2); // 2 to 32 months
+      const attrition = parseFloat((Math.random() * 25 + 2).toFixed(1)); // 2% to 27%
       const insource = Math.floor(Math.random() * 50 + 5);
-      const leadership = Math.floor(Math.random() * 4); // 0 to 3 new leaders
+      const leadership = Math.floor(Math.random() * 4); 
+      
+      // AI estimates market volatility on a scale of 0 to 15
+      const marketVolatility = Math.floor(Math.random() * 15); 
 
-      // 3. UI Updates: Gauge Needle
+      // 3. GRADUAL RISK CALCULATION (The 5 C's)
+      let capacityRisk = 0;
+      if (runway <= 6) capacityRisk = 35;
+      else if (runway >= 24) capacityRisk = 0;
+      else capacityRisk = 35 - ((runway - 6) / 18) * 35; // Slides smoothly down as runway goes up
+
+      let characterRisk = 0;
+      if (attrition >= 20) characterRisk = 30;
+      else if (attrition <= 5) characterRisk = 0;
+      else characterRisk = ((attrition - 5) / 15) * 30; // Slides smoothly up as attrition goes up
+
+      let capitalRisk = 0;
+      if (revenue <= 2) capitalRisk = 20;
+      else if (revenue >= 20) capitalRisk = 0;
+      else capitalRisk = 20 - ((revenue - 2) / 18) * 20; // Slides smoothly down as revenue goes up
+
+      // Total Risk Calculation (Rounded)
+      const riskScore = Math.min(100, Math.round(capacityRisk + characterRisk + capitalRisk + marketVolatility));
+
+      // 4. UI Updates: Gauge Needle
       const degrees = (riskScore / 100) * 180;
       document.getElementById('gaugeNeedle').style.transform = `rotate(${degrees}deg)`;
 
-      // 4. UI Updates: Logic processing
+      // 5. UI Updates: Logic processing
       const scoreEl = document.getElementById('scoreNumber');
       const badgeEl = document.getElementById('scoreBadge');
       
@@ -148,7 +182,6 @@
 
       let riskCategoryText = "";
 
-      // Logic: Higher Score = Higher Risk
       if (riskScore > 50) { 
         riskCategoryText = "High Risk";
         scoreEl.className += "text-riskred";
@@ -173,7 +206,7 @@
       
       scoreEl.innerHTML = `${riskScore}<span class="text-2xl align-top">%</span>`;
 
-      // 5. Build Dynamic Financial Report with 6 Grid Items
+      // 6. Build Dynamic Report
       document.getElementById('detailedFactors').innerHTML = `
         <div class="w-full space-y-5">
           <div class="grid grid-cols-2 sm:grid-cols-3 gap-y-6 gap-x-4 border-b border-slate-100 pb-5">
@@ -185,8 +218,14 @@
             <div><p class="text-xs text-slate-400">Sr. Leadership Hiring</p><p class="font-mono text-lg text-ink font-semibold">${leadership} exec(s)</p></div>
           </div>
           <div>
-             <p class="text-sm text-ink font-semibold mb-1">AI Analytical Summary</p>
-             <p class="text-sm leading-relaxed">Based on synthetic analysis, <strong>${input}</strong> exhibits a risk score of ${riskScore}% (${riskCategoryText}). High risk thresholds (>50%) are heavily influenced by the cash runway of ${runway} months and an employee attrition rate of ${attrition}%. Recent organizational shifts, including the addition of ${leadership} senior leaders, have been factored into the operational stability index.</p>
+             <p class="text-sm text-ink font-semibold mb-1">AI 5 C's Assessment Summary</p>
+             <p class="text-sm leading-relaxed mb-3">Based on the extraction algorithm, <strong>${input}</strong> generated a cumulative risk score of ${riskScore}% (${riskCategoryText}).</p>
+             <ul class="text-xs space-y-1 text-slate-500">
+               <li><strong class="text-slate-700">Capacity Penalty:</strong> ${Math.round(capacityRisk)}/35 pts (derived from ${runway} mo runway)</li>
+               <li><strong class="text-slate-700">Character Penalty:</strong> ${Math.round(characterRisk)}/30 pts (derived from ${attrition}% turnover)</li>
+               <li><strong class="text-slate-700">Capital Penalty:</strong> ${Math.round(capitalRisk)}/20 pts (derived from $${revenue}M revenue)</li>
+               <li><strong class="text-slate-700">Conditions Penalty:</strong> ${marketVolatility}/15 pts (AI volatility index)</li>
+             </ul>
           </div>
         </div>
       `;
