@@ -59,7 +59,7 @@
 
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
       
-      <!-- Score / Gauge card WITH SCORING TABLE -->
+      <!-- Score / Gauge card WITH DETAILED METHODOLOGY -->
       <section class="lg:col-span-4">
         <div class="bg-white rounded-lg hairline p-6 h-full flex flex-col items-center">
           <p class="text-[11px] uppercase tracking-[0.14em] text-slate-500 font-semibold mb-4 self-start">Composite Risk Score</p>
@@ -88,24 +88,53 @@
              </span>
           </div>
 
-          <!-- NEW: 5 C's Framework Scoring Table -->
-          <div class="mt-8 w-full border-t border-slate-200 pt-5">
-            <p class="text-[11px] uppercase tracking-[0.14em] text-slate-500 font-semibold mb-3">5 C's Risk Weighting</p>
-            <table class="w-full text-xs text-left text-slate-600">
-              <thead>
-                <tr class="border-b border-slate-200">
-                  <th class="pb-2 font-semibold">Category</th>
-                  <th class="pb-2 font-semibold">Metric</th>
-                  <th class="pb-2 text-right font-semibold">Max Risk</th>
-                </tr>
-              </thead>
-              <tbody class="divide-y divide-slate-100">
-                <tr><td class="py-2">Capacity</td><td class="py-2">Cash Runway</td><td class="py-2 text-right font-mono font-semibold text-riskred">35 pts</td></tr>
-                <tr><td class="py-2">Character</td><td class="py-2">Attrition</td><td class="py-2 text-right font-mono font-semibold text-riskred">30 pts</td></tr>
-                <tr><td class="py-2">Capital</td><td class="py-2">Revenue</td><td class="py-2 text-right font-mono font-semibold text-riskred">20 pts</td></tr>
-                <tr><td class="py-2">Conditions</td><td class="py-2">AI Volatility Index</td><td class="py-2 text-right font-mono font-semibold text-riskred">15 pts</td></tr>
-              </tbody>
-            </table>
+          <!-- NEW: Expanded Methodology Section -->
+          <div class="mt-8 w-full border-t border-slate-200 pt-5 text-left">
+            <p class="text-[11px] uppercase tracking-[0.14em] text-slate-500 font-semibold mb-4">Methodology & Logic</p>
+            
+            <div class="space-y-4">
+              <!-- Capacity -->
+              <div>
+                <p class="text-xs font-semibold text-ink">1. Capacity (Max 35 pts)</p>
+                <p class="text-[11px] text-slate-500 mt-0.5 mb-1.5 leading-relaxed">Measures the company's ability to sustain operations based on cash flow (Est. Runway).</p>
+                <div class="bg-slate-50 p-2 rounded border border-slate-100 text-[10px] font-mono text-slate-600 leading-tight">
+                  IF Runway ≤ 6 mos → +35 pts<br>
+                  IF Runway ≥ 24 mos → +0 pts<br>
+                  ELSE → 35 - ((Runway - 6) / 18) * 35
+                </div>
+              </div>
+
+              <!-- Character -->
+              <div>
+                <p class="text-xs font-semibold text-ink">2. Character (Max 30 pts)</p>
+                <p class="text-[11px] text-slate-500 mt-0.5 mb-1.5 leading-relaxed">Evaluates organizational stability and culture through Employee Attrition rates.</p>
+                <div class="bg-slate-50 p-2 rounded border border-slate-100 text-[10px] font-mono text-slate-600 leading-tight">
+                  IF Attrition ≥ 20% → +30 pts<br>
+                  IF Attrition ≤ 5% → +0 pts<br>
+                  ELSE → ((Attrition - 5) / 15) * 30
+                </div>
+              </div>
+
+              <!-- Capital -->
+              <div>
+                <p class="text-xs font-semibold text-ink">3. Capital (Max 20 pts)</p>
+                <p class="text-[11px] text-slate-500 mt-0.5 mb-1.5 leading-relaxed">Assesses financial backing and primary revenue generation capabilities.</p>
+                <div class="bg-slate-50 p-2 rounded border border-slate-100 text-[10px] font-mono text-slate-600 leading-tight">
+                  IF Revenue ≤ $2M → +20 pts<br>
+                  IF Revenue ≥ $20M → +0 pts<br>
+                  ELSE → 20 - ((Revenue - 2) / 18) * 20
+                </div>
+              </div>
+
+              <!-- Conditions -->
+              <div>
+                <p class="text-xs font-semibold text-ink">4. Conditions & Collateral (Max 15 pts)</p>
+                <p class="text-[11px] text-slate-500 mt-0.5 mb-1.5 leading-relaxed">The AI assesses market volatility, recent funding, and leadership changes to output a qualitative index.</p>
+                <div class="bg-slate-50 p-2 rounded border border-slate-100 text-[10px] font-mono text-slate-600 leading-tight">
+                  AI Volatility Index = 0 to 15 pts
+                </div>
+              </div>
+            </div>
           </div>
 
         </div>
@@ -140,40 +169,37 @@
       document.getElementById('clientNameDisplay').innerText = input;
       
       // 2. Data Extraction (Simulated for now)
-      const revenue = parseFloat((Math.random() * 25 + 1).toFixed(1)); // $1M to $26M
+      const revenue = parseFloat((Math.random() * 25 + 1).toFixed(1)); 
       const funding = parseFloat((Math.random() * 10).toFixed(1));
-      const runway = Math.floor(Math.random() * 30 + 2); // 2 to 32 months
-      const attrition = parseFloat((Math.random() * 25 + 2).toFixed(1)); // 2% to 27%
+      const runway = Math.floor(Math.random() * 30 + 2); 
+      const attrition = parseFloat((Math.random() * 25 + 2).toFixed(1)); 
       const insource = Math.floor(Math.random() * 50 + 5);
       const leadership = Math.floor(Math.random() * 4); 
-      
-      // AI estimates market volatility on a scale of 0 to 15
       const marketVolatility = Math.floor(Math.random() * 15); 
 
-      // 3. GRADUAL RISK CALCULATION (The 5 C's)
+      // 3. GRADUAL RISK CALCULATION
       let capacityRisk = 0;
       if (runway <= 6) capacityRisk = 35;
       else if (runway >= 24) capacityRisk = 0;
-      else capacityRisk = 35 - ((runway - 6) / 18) * 35; // Slides smoothly down as runway goes up
+      else capacityRisk = 35 - ((runway - 6) / 18) * 35; 
 
       let characterRisk = 0;
       if (attrition >= 20) characterRisk = 30;
       else if (attrition <= 5) characterRisk = 0;
-      else characterRisk = ((attrition - 5) / 15) * 30; // Slides smoothly up as attrition goes up
+      else characterRisk = ((attrition - 5) / 15) * 30; 
 
       let capitalRisk = 0;
       if (revenue <= 2) capitalRisk = 20;
       else if (revenue >= 20) capitalRisk = 0;
-      else capitalRisk = 20 - ((revenue - 2) / 18) * 20; // Slides smoothly down as revenue goes up
+      else capitalRisk = 20 - ((revenue - 2) / 18) * 20; 
 
-      // Total Risk Calculation (Rounded)
       const riskScore = Math.min(100, Math.round(capacityRisk + characterRisk + capitalRisk + marketVolatility));
 
       // 4. UI Updates: Gauge Needle
       const degrees = (riskScore / 100) * 180;
       document.getElementById('gaugeNeedle').style.transform = `rotate(${degrees}deg)`;
 
-      // 5. UI Updates: Logic processing
+      // 5. UI Updates: Colors and Badges
       const scoreEl = document.getElementById('scoreNumber');
       const badgeEl = document.getElementById('scoreBadge');
       
